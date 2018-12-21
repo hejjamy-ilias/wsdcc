@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Implementation-Title: wsdcc-application
+Implementation-Version: 0.0.1-SNAPSHOT
+Built-By: ADMINIBM
+Implementation-Vendor-Id: com.bnpparibas.dsibddf.AP05568.WSDCC
+Build-Jdk: 1.8.0_181
+Implementation-URL: http://projects.spring.io/spring-boot/wsdcc/wsdcc-
+ application/
+Created-By: Maven Integration for Eclipse
+Implementation-Vendor: Pivotal Software, Inc.
+
