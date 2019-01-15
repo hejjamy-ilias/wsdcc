@@ -14,6 +14,10 @@ import javax.xml.datatype.XMLGregorianCalendar;
 /**
  * Message de demande d'offre DCC - Request
  */
+/**
+ * @author Ismail B30653
+ *
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "pan", "cardType", "tranAmt", "time", "date", "acqCo", "tranFee", "acqId", "rrn",
 		"termId", "accId", "crdAccLoc", "tranCur", "pCode", "atmCat" })
@@ -25,7 +29,7 @@ public class DCCInqRQ {
 	@XmlElement(name = "CardType")
 	private String cardType;
 	@XmlElement(name = "TranAmt", required = true)
-	private int tranAmt;
+	private BigDecimal tranAmt;
 	@XmlElement(name = "Time", required = true)
 	@XmlSchemaType(name = "time")
 	private String time;
@@ -101,7 +105,7 @@ public class DCCInqRQ {
 	 * @return possible object is {@link BigDecimal }
 	 * 
 	 */
-	public int getTranAmt() {
+	public BigDecimal getTranAmt() {
 		return tranAmt;
 	}
 
@@ -112,7 +116,7 @@ public class DCCInqRQ {
 	 *            allowed object is {@link BigDecimal }
 	 * 
 	 */
-	public void setTranAmt(final int value) {
+	public void setTranAmt(final BigDecimal value) {
 		this.tranAmt = value;
 	}
 

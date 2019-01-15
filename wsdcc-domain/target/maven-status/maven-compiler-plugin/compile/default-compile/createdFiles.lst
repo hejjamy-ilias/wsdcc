@@ -1,0 +1,6 @@
+com\bnpparibas\dsibddf\domain\beans\DCCInqRP$DCCOffer.class
+com\bnpparibas\dsibddf\domain\beans\DCCInqRP$AcqSett.class
+com\bnpparibas\dsibddf\domain\beans\DCCInqRP.class
+com\bnpparibas\dsibddf\domain\beans\DCCInqRQ$CrdAccLoc.class
+com\bnpparibas\dsibddf\domain\beans\DCCInqRQ.class
+com\bnpparibas\dsibddf\domain\services\IServiceCIBCRest.class

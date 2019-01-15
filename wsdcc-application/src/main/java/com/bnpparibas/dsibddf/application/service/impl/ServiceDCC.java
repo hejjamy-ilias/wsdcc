@@ -3,111 +3,132 @@
  */
 package com.bnpparibas.dsibddf.application.service.impl;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bnpparibas.dsibddf.application.service.IServiceDCC;
-import com.bnpparibas.dsibddf.application.utils.Constants;
+import com.bnpparibas.dsibddf.application.statistiques.StatistiquesImpl;
+import com.bnpparibas.dsibddf.application.utils.RetraitDCCUtil;
+import com.bnpparibas.dsibddf.domain.beans.BinGaGn;
 import com.bnpparibas.dsibddf.domain.beans.DCCInqRP;
-import com.bnpparibas.dsibddf.domain.beans.DCCInqRP.DCCOffer;
 import com.bnpparibas.dsibddf.domain.beans.DCCInqRQ;
+import com.bnpparibas.dsibddf.domain.beans.DCCSwaRp;
+import com.bnpparibas.dsibddf.domain.constants.Constants;
+import com.bnpparibas.dsibddf.domain.services.IBinGAGN;
+import com.bnpparibas.dsibddf.domain.services.IServiceCIBCRest;
 
 /**
- * @author ADMINIBM
+ * @author Ismail B30653
  *
  */
 @Service
 public class ServiceDCC implements IServiceDCC {
-	
 
-	public DCCInqRP callServiceDCC(DCCInqRQ dccInqRQ) {
-		
-		DCCInqRP dccInqRP=new DCCInqRP();
-		
-		dccInqRP.setPan(dccInqRQ.getPan());
-        dccInqRP.setTranAmt(BigDecimal.valueOf(dccInqRQ.getTranAmt()));
-        dccInqRP.setTime(convertToXmlGregorianCalendar(dccInqRQ.getTime()));
-        dccInqRP.setDate(convertToXmlGregorianCalendar(dccInqRQ.getDate()));
-        dccInqRP.setAcqCo(dccInqRQ.getAcqCo());
-        dccInqRP.setTermId(dccInqRQ.getTermId());
-        dccInqRP.setTranCur(dccInqRQ.getTranCur());
-        dccInqRP.setAtmCat(dccInqRQ.getAtmCat());
-        dccInqRP.setRcvId("tttt");
-        dccInqRP.setRc("hhh");
-   
-        final  DCCOffer dccOffer = new DCCOffer();
-        
-        dccOffer.setBillAmt(BigDecimal.valueOf(Double.parseDouble(Constants.BILLAMT)));
-        dccOffer.setBillRate(BigDecimal.valueOf(Double.parseDouble(Constants.BILLRATE)));
-        dccOffer.setBillCur(BigInteger.valueOf(Long.parseLong(Constants.BILLCUR)));
-        dccOffer.setBillCurA(Constants.BILLCURA);
-        dccOffer.setRpId(Constants.RPID);
-        dccOffer.setRFlag(Constants.RFLAG);
-        dccOffer.setR(BigDecimal.valueOf(Double.parseDouble(Constants.R)));
-        dccOffer.setPos(Constants.POS);
-        dccOffer.setExp(convertToXmlGregorianCalendar(Constants.EXP));
-        dccOffer.setMUp(BigDecimal.valueOf(Double.parseDouble(Constants.MUP)));
-        dccOffer.setSrc(Constants.SRC);
-        dccOffer.setRev(BigDecimal.valueOf(Double.parseDouble(Constants.REV)));
-        dccInqRP.setDccOffer(dccOffer);
-        
+	@Autowired
+	private IServiceCIBCRest serviceCIBCRest;
 
-		
-		return dccInqRP;
+	@Autowired
+	private IBinGAGN serviceBinGAGN;
+
+	/* (non-Javadoc)
+	 * @see com.bnpparibas.dsibddf.application.service.IServiceDCC#callServiceDCC(com.bnpparibas.dsibddf.domain.beans.DCCInqRQ)
+	 */
+	public DCCSwaRp callServiceDCC(final DCCInqRQ dccInqRQ) {
+		final BinGaGn binGaGn = getBin(dccInqRQ.getPan());
+
+		if (!eligibiliteBinGaGn(getTypeBinGAGN(binGaGn))) {
+			return getResultServiceCIBC(dccInqRQ);
+		}
+		return RetraitDCCUtil.initNonEligible(dccInqRQ);
+
 	}
 
-	
-	   /**
-     * Converter type string to xmlGregorianCalendar
-     * @author b30653
-     * @param dateString
-     * @return XMLGregorianCalendar
-     * @exception ParseException
-     */
-    private static XMLGregorianCalendar convertToXmlGregorianCalendar(String dateString) {
-        
-        DateFormat format=null;
-            if (dateString.length()<= Constants.LONGEUR_TIME) {
-                format = new SimpleDateFormat("HH:mm:ss");
-            }else if (dateString.length()== Constants.LONGEUR_CDATE) {
-                format = new SimpleDateFormat("yyyy-MM-dd");
-            }else if (dateString.length()==Constants.LONGEUR_EXP) {
-                format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");  
-            }
-        XMLGregorianCalendar xmlGregCal = null;
-        Date date;
-        GregorianCalendar cal = new GregorianCalendar();
-            try {
-                if (!dateString.isEmpty()) {
-                    date = format.parse(dateString);
-                    cal.setTime(date);
-                }  
-                 
-            } catch (ParseException e) {
-                
-              
-            	System.out.println("["+"probleme de conversion" + cal + "()] ");
-            }
-         try {
-            xmlGregCal =  DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
-            
-        } catch (DatatypeConfigurationException e) {
-            System.out.println("["+"probleme de conversion" + cal + "()] ");
-            
-        }
+	/**
+	 * @param dccInqRQ
+	 * @return
+	 */
+	public DCCSwaRp getResultServiceCIBC(final DCCInqRQ dccInqRQ) {
 
-        return xmlGregCal;
- }
-	
+		final DCCSwaRp swaRp = new DCCSwaRp();
+		final DCCInqRP dccInqRP = serviceCIBCRest.callServiceCIBC(dccInqRQ);
+
+		if (Constants.CODE_RETOUR_OK.equalsIgnoreCase(dccInqRP.getRc()) && dccInqRP.getDccOffer() != null) {
+
+			swaRp.setCodeReponse(0);
+			swaRp.setLibelleCodeReponse("Traitement realise avec succes");
+			swaRp.setReferenceDCC(dccInqRP.getDccOffer().getRpId());
+			swaRp.setDccInqRP(dccInqRP);
+			alimenterStats(swaRp.getDccInqRP());
+			return swaRp;
+
+		}
+		return RetraitDCCUtil.initNonEligible(dccInqRQ);
+	}
+
+	/**
+	 * @param numCarte
+	 * @return
+	 */
+	public BinGaGn getBin(final String numCarte) {
+		String bin = Constants.CHAR_VIDE;
+		BinGaGn binGaGn = null;
+		if (numCarte != null) {
+			for (int i = 10; i > 5; i--) {
+				if (numCarte.length() >= i) {
+					bin = numCarte.substring(0, i);
+					binGaGn = serviceBinGAGN.findByBin(bin);
+					if (binGaGn != null) {
+						break;
+					}
+				}
+			}
+		}
+
+		return binGaGn;
+	}
+
+	/**
+	 * @param binGaGn
+	 * @return
+	 */
+	private String getTypeBinGAGN(final BinGaGn binGaGn) {
+		String typeBin = Constants.BIN_AUTRE;
+		if (binGaGn != null) {
+			final String bin = binGaGn.getGaGn();
+			if (Constants.BIN_GN.equalsIgnoreCase(bin) || Constants.BIN_GAGN.equalsIgnoreCase(bin)) {
+				typeBin = Constants.BIN_GN;
+			} else if (Constants.BIN_GA.equalsIgnoreCase(bin)) {
+				typeBin = Constants.BIN_GA;
+			} else {
+				typeBin = Constants.BIN_AUTRE;
+			}
+			/*
+			 * if (LOGGER.isDebugEnabled()) { LOGGER.debug("BIN = " + binGaGn.getBin() +
+			 * " & Type = " + typeBin); //$NON-NLS-1$ //$NON-NLS-2$ }
+			 */
+		}
+		return typeBin;
+
+	}
+
+	/**
+	 * @param typeBin
+	 * @return
+	 */
+	public boolean eligibiliteBinGaGn(String typeBin) {
+		return Constants.BIN_GN.equalsIgnoreCase(typeBin);
+	}
+
+	private void alimenterStats(final DCCInqRP dccInqRP) {
+
+		final StatistiquesImpl stats = new StatistiquesImpl();
+		stats.setCarte(dccInqRP.getPan());
+		stats.setIdAtm(dccInqRP.getTermId());
+		stats.setCibcResponse(dccInqRP);
+		stats.setMontantEnEuro(dccInqRP.getTranAmt().toString());
+		stats.setPosDecimaleMontantEuro("");
+		stats.setCodeSiege(" "); //$NON-NLS-1$
+		// Envoi du message
+		stats.envoyerStats();
+	}
 }

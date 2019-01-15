@@ -11,6 +11,9 @@
         <dependent-module archiveName="wsdcc-domain-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/wsdcc-domain/wsdcc-domain">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="wsdcc-infrastructure-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/wsdcc-infrastructure/wsdcc-infrastructure">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="wsdcc-exposition"/>
         <property name="java-output-path" value="/wsdcc-exposition/target/classes"/>
     </wb-module>

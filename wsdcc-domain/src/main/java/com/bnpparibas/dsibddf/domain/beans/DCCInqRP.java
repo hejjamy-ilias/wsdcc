@@ -13,7 +13,10 @@ import javax.xml.datatype.XMLGregorianCalendar;
 /**
  * Message de reponse  demande d'offre DCC - Reponse
  */
-
+/**
+ * @author Ismail B30653
+ *
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "pan", "tranAmt", "time", "date", "acqCo", "tranFee", "acqId", "rrn", "termId",
 		"accId", "tranCur", "rc", "atmCat", "cDate", "rcvId", "dccOffer", "acqSett" })

@@ -17,10 +17,17 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableAutoConfiguration
 @ComponentScan("com.bnpparibas.dsibddf")
 public class SpringRestApplication {
+	/**
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		SpringApplication.run(SpringRestApplication.class, args);
 	}
 
+	/**
+	 * @param application
+	 * @return
+	 */
 	protected SpringApplicationBuilder configure(final SpringApplicationBuilder application) {
 		return application.sources(SpringRestApplication.class);
 	}

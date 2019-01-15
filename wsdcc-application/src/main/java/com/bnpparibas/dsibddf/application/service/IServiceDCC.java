@@ -3,14 +3,19 @@
  */
 package com.bnpparibas.dsibddf.application.service;
 
-import com.bnpparibas.dsibddf.domain.beans.DCCInqRP;
 import com.bnpparibas.dsibddf.domain.beans.DCCInqRQ;
+import com.bnpparibas.dsibddf.domain.beans.DCCSwaRp;
+
 
 /**
- * @author ADMINIBM
+ * @author Ismail B30653
  *
  */
 public interface IServiceDCC {
 
-	public DCCInqRP callServiceDCC(DCCInqRQ dccInqRQ);
+	/**
+	 * @param dccInqRQ
+	 * @return
+	 */
+	public DCCSwaRp callServiceDCC(DCCInqRQ dccInqRQ);
 }

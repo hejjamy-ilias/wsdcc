@@ -20,12 +20,19 @@ import javax.xml.datatype.XMLGregorianCalendar;
 @XmlRootElement(name = "DCCInqRQ")
 public class DCCInqRQDTO {
 
+	/**
+	 * 
+	 */
+	public DCCInqRQDTO() {
+		super();
+	}
+
 	@XmlElement(name = "PAN", required = true)
 	private String pan;
 	@XmlElement(name = "CardType")
 	private String cardType;
 	@XmlElement(name = "TranAmt", required = true)
-	private int tranAmt;
+	private BigDecimal tranAmt;
 	@XmlElement(name = "Time", required = true)
 	@XmlSchemaType(name = "time")
 	private String time;
@@ -101,7 +108,7 @@ public class DCCInqRQDTO {
 	 * @return possible object is {@link BigDecimal }
 	 * 
 	 */
-	public int getTranAmt() {
+	public BigDecimal getTranAmt() {
 		return tranAmt;
 	}
 
@@ -112,7 +119,7 @@ public class DCCInqRQDTO {
 	 *            allowed object is {@link BigDecimal }
 	 * 
 	 */
-	public void setTranAmt(final int value) {
+	public void setTranAmt(final BigDecimal value) {
 		this.tranAmt = value;
 	}
 
@@ -375,6 +382,13 @@ public class DCCInqRQDTO {
 	@XmlType(name = "", propOrder = { "lo", "ci", "co" })
 	public static class CrdAccLoc {
 
+		/**
+		 * 
+		 */
+		public CrdAccLoc() {
+			super();
+		}
+
 		@XmlElement(name = "Lo", required = true)
 		private String lo;
 		@XmlElement(name = "Ci", required = true)
@@ -445,6 +459,21 @@ public class DCCInqRQDTO {
 			this.co = value;
 		}
 
+		/**
+		 * @param lo
+		 * @param ci
+		 * @param co
+		 */
+		public CrdAccLoc(String lo, String ci, String co) {
+			
+			super();
+			this.lo = lo;
+			this.ci = ci;
+			this.co = co;
+		}
+
 	}
+
+
 
 }

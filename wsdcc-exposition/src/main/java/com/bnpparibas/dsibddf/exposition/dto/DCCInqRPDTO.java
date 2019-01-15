@@ -36,7 +36,7 @@ public class DCCInqRPDTO {
 	private BigDecimal tranFee;
 	@XmlElement(name = "AcqId", required = true)
 	private String acqId;
-	@XmlElement(name = "RRN")
+	@XmlElement(name = "RRN",required=false )
 	private String rrn;
 	@XmlElement(name = "TermId", required = true)
 	private String termId;
