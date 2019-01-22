@@ -1,23 +1,16 @@
 package com.bnpparibas.dsibddf.domain.beans;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+
 
 /**
  * @author Ismail B30653
  *
  */
-@Entity
-@Table(name ="BinGaGn")
 public class BinGaGn {
 
 	/**
 	 * 
 	 */
-	@Id
-	@Column(name = "bin", unique = true, nullable = false, precision = 0)
 	String bin;
 
 	/**

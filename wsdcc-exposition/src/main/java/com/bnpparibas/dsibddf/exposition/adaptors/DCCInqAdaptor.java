@@ -22,7 +22,7 @@ public class DCCInqAdaptor {
 	 * @param dccInqRP
 	 * @return
 	 */
-	private static DCCInqRPDTO convertToDto(final DCCInqRP dccInqRP) {
+	public static DCCInqRPDTO convertToDto(final DCCInqRP dccInqRP) {
 		final DCCInqRPDTO rpDTO = new DCCInqRPDTO();
 
 		if (dccInqRP.getAcqSett() != null) {

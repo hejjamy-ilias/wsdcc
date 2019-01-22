@@ -6,6 +6,8 @@ package com.bnpparibas.dsibddf.infrastructure.services;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,8 @@ import com.bnpparibas.dsibddf.infrastructure.exceptions.RestTemplateResponseErro
  */
 @Service
 public class ServiceCIBCRest implements IServiceCIBCRest {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCIBCRest.class);
 
 	private final RestTemplate restTemplate;
 	/**
@@ -39,6 +43,7 @@ public class ServiceCIBCRest implements IServiceCIBCRest {
 
 	public DCCInqRP callServiceCIBC(DCCInqRQ dccInqRQ) {
 		if (isBouchon) {
+			LOGGER.debug("You are in bouchon mode");
 			return callModeBouchonDCC(dccInqRQ) ;
 		} 
 		return restTemplate.postForObject("", dccInqRQ, DCCInqRP.class);
@@ -53,7 +58,7 @@ public class ServiceCIBCRest implements IServiceCIBCRest {
 public DCCInqRP callModeBouchonDCC(DCCInqRQ dccInqRQ) {
 		
 		DCCInqRP dccInqRP=new DCCInqRP();
-		
+		LOGGER.debug("Welcome callModeBouchonDCC");
 		dccInqRP.setPan(dccInqRQ.getPan());
         dccInqRP.setTranAmt(dccInqRQ.getTranAmt());
         dccInqRP.setTime(FormaterUtil.convertToXmlGregorianCalendar(dccInqRQ.getTime()));

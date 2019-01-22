@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bnpparibas.dsibddf.application.service.IServiceDCC;
+import com.bnpparibas.dsibddf.application.service.exceptions.DCCLocalException;
 import com.bnpparibas.dsibddf.application.statistiques.StatistiquesImpl;
 import com.bnpparibas.dsibddf.application.utils.RetraitDCCUtil;
 import com.bnpparibas.dsibddf.domain.beans.BinGaGn;
@@ -24,6 +25,10 @@ import com.bnpparibas.dsibddf.domain.services.IServiceCIBCRest;
 @Service
 public class ServiceDCC implements IServiceDCC {
 
+	private static final int CODE_SUCCES = 0;
+
+	private static final String TRAITEMENT_REALISE_AVEC_SUCCES = "Traitement realise avec succes";
+
 	@Autowired
 	private IServiceCIBCRest serviceCIBCRest;
 
@@ -35,11 +40,11 @@ public class ServiceDCC implements IServiceDCC {
 	 */
 	public DCCSwaRp callServiceDCC(final DCCInqRQ dccInqRQ) {
 		final BinGaGn binGaGn = getBin(dccInqRQ.getPan());
-
-		if (!eligibiliteBinGaGn(getTypeBinGAGN(binGaGn))) {
+		if (binGaGn == null||eligibiliteBinGaGn(getTypeBinGAGN(binGaGn))) {
+			throw new DCCLocalException(RetraitDCCUtil.initError(dccInqRQ));
+		}else{
 			return getResultServiceCIBC(dccInqRQ);
 		}
-		return RetraitDCCUtil.initNonEligible(dccInqRQ);
 
 	}
 
@@ -53,16 +58,17 @@ public class ServiceDCC implements IServiceDCC {
 		final DCCInqRP dccInqRP = serviceCIBCRest.callServiceCIBC(dccInqRQ);
 
 		if (Constants.CODE_RETOUR_OK.equalsIgnoreCase(dccInqRP.getRc()) && dccInqRP.getDccOffer() != null) {
-
-			swaRp.setCodeReponse(0);
-			swaRp.setLibelleCodeReponse("Traitement realise avec succes");
+			swaRp.setCodeReponse(CODE_SUCCES);
+			swaRp.setLibelleCodeReponse(TRAITEMENT_REALISE_AVEC_SUCCES);
 			swaRp.setReferenceDCC(dccInqRP.getDccOffer().getRpId());
 			swaRp.setDccInqRP(dccInqRP);
 			alimenterStats(swaRp.getDccInqRP());
 			return swaRp;
 
+		}else {
+			throw new DCCLocalException(RetraitDCCUtil.initError(dccInqRQ));
 		}
-		return RetraitDCCUtil.initNonEligible(dccInqRQ);
+		
 	}
 
 	/**

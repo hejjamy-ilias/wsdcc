@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bnpparibas.dsibddf.application.service.exceptions.DCCError;
 import com.bnpparibas.dsibddf.domain.beans.DCCInqRP;
 import com.bnpparibas.dsibddf.domain.beans.DCCInqRQ;
 import com.bnpparibas.dsibddf.domain.beans.DCCSwaRp;
@@ -155,6 +156,31 @@ public final class RetraitDCCUtil {
 	}
 
 	/**
+	 * Création manuelle d'un retour du flux non disponible
+	 * 
+	 * @return
+	 */
+	public static DCCError initError(DCCInqRQ rq) {
+		final DCCError dccError = new DCCError();
+		final DCCInqRP dccInqRP = new DCCInqRP();
+		dccError.setCodeReponse(-1);
+		dccError.setLibelleCodeReponse("Taux DCC non disponible");
+		dccError.setReferenceDCC(Constants.REF_DCC_NON_ELEGB);
+		dccInqRP.setPan(rq.getPan());
+		dccInqRP.setTranAmt(rq.getTranAmt());
+		dccInqRP.setTime(FormaterUtil.convertToXmlGregorianCalendar(rq.getTime()));
+		dccInqRP.setDate(FormaterUtil.convertToXmlGregorianCalendar(rq.getDate()));
+		dccInqRP.setAcqCo(rq.getAcqCo());
+		dccInqRP.setAcqId(rq.getAcqId());;
+		dccInqRP.setTermId(rq.getTermId());
+		dccInqRP.setTranCur(rq.getTranCur());
+		dccInqRP.setAtmCat(rq.getAtmCat());
+		dccError.setDccInqRP(dccInqRP);
+         LOGGER.debug("flux en  erreur- cas : DCC envoie un code retour DCC différent de zéro");
+		return dccError;
+	}
+
+	/**
 	 * Création manuelle d'un retour Non Eligible
 	 * 
 	 * @return
@@ -178,7 +204,9 @@ public final class RetraitDCCUtil {
          LOGGER.debug("flux en  erreur- cas : DCC envoie un code retour DCC différent de zéro");
 		return swaRp;
 	}
-
+	
+	
+	
 	/**
 	 * 
 	 * @param numCarte
